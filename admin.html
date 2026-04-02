@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin – BĐS Luxury</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#c9a84c;--gold-light:#e8c97a;--gold-dark:#8a6a1f;
+  --navy:#0d1b2a;--navy-mid:#162235;--navy-light:#1e3050;
+  --white:#f5f0e8;--white-dim:rgba(245,240,232,0.65);
+  --red:#e05252;--green:#4caf7d;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--navy);color:var(--white);font-family:'DM Sans',sans-serif;min-height:100vh}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:var(--navy);z-index:999;display:flex;align-items:center;justify-content:center}
+.login-box{background:var(--navy-mid);border:1px solid rgba(201,168,76,0.25);border-radius:16px;padding:48px 40px;width:360px;text-align:center}
+.login-logo{font-family:'Cormorant Garamond',serif;font-size:1.8rem;color:var(--gold);margin-bottom:6px}
+.login-sub{font-size:.82rem;color:var(--white-dim);margin-bottom:32px}
+.login-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:12px 16px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.95rem;outline:none;margin-bottom:14px;transition:border .2s}
+.login-input:focus{border-color:var(--gold)}
+.login-btn{width:100%;background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:12px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.04em}
+.login-btn:hover{background:var(--gold-light)}
+.login-err{color:var(--red);font-size:.8rem;margin-top:10px;min-height:18px}
+
+/* HEADER */
+header{background:rgba(13,27,42,0.98);border-bottom:1px solid rgba(201,168,76,0.15);padding:0 32px;position:sticky;top:0;z-index:50}
+.header-inner{max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold)}
+.header-actions{display:flex;gap:10px}
+.btn{padding:8px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .2s;border:1px solid transparent}
+.btn-gold{background:var(--gold);color:var(--navy)}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;border-color:rgba(201,168,76,0.3);color:var(--white-dim)}
+.btn-outline:hover{border-color:var(--gold);color:var(--white)}
+.btn-red{background:var(--red);color:#fff;border:none}
+.btn-red:hover{opacity:.85}
+.btn-sm{padding:5px 12px;font-size:.78rem}
+.logout-btn{background:transparent;border:1px solid rgba(201,168,76,0.2);color:var(--white-dim);padding:7px 14px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .2s}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* STATS */
+.stats{max-width:1200px;margin:0 auto;padding:28px 32px 0;display:flex;gap:16px;flex-wrap:wrap}
+.stat-card{background:var(--navy-mid);border:1px solid rgba(201,168,76,0.12);border-radius:10px;padding:18px 24px;flex:1;min-width:160px}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--gold);font-weight:600}
+.stat-label{font-size:.78rem;color:var(--white-dim);margin-top:3px}
+
+/* MAIN */
+main{max-width:1200px;margin:0 auto;padding:28px 32px 80px;display:grid;grid-template-columns:1fr 380px;gap:28px;align-items:start}
+@media(max-width:1024px){main{grid-template-columns:1fr}}
+
+/* SECTION TITLE */
+.section-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.section-title small{font-family:'DM Sans',sans-serif;font-size:.75rem;color:var(--white-dim);font-weight:400}
+
+/* FORM */
+.form-card{background:var(--navy-mid);border:1px solid rgba(201,168,76,0.12);border-radius:14px;padding:28px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:span 2}
+label{font-size:.77rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);font-weight:500}
+input,textarea,select{background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.15);border-radius:8px;padding:10px 14px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:all .2s;width:100%}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);background:rgba(201,168,76,0.04)}
+input::placeholder,textarea::placeholder{color:rgba(245,240,232,0.25)}
+textarea{resize:vertical;min-height:90px}
+select option{background:var(--navy-mid)}
+
+/* DRAG DROP AREA */
+.drop-zone{border:2px dashed rgba(201,168,76,0.25);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:rgba(255,255,255,0.02)}
+.drop-zone.drag-over{border-color:var(--gold);background:rgba(201,168,76,0.07)}
+.drop-zone p{color:var(--white-dim);font-size:.85rem;margin-top:8px}
+.drop-zone-icon{font-size:2rem}
+.drop-input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.image-previews{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.img-preview{position:relative;width:70px;height:70px;border-radius:6px;overflow:hidden;border:1px solid rgba(201,168,76,0.2)}
+.img-preview img{width:100%;height:100%;object-fit:cover}
+.img-preview .del-img{position:absolute;top:2px;right:2px;width:18px;height:18px;background:rgba(224,82,82,0.9);border:none;border-radius:50%;color:#fff;font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* IMPORT JSON */
+.import-section{margin-top:20px;padding-top:20px;border-top:1px solid rgba(201,168,76,0.1)}
+.import-drop{border:2px dashed rgba(201,168,76,0.2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;background:rgba(255,255,255,0.02)}
+.import-drop:hover,.import-drop.drag-over{border-color:var(--gold);background:rgba(201,168,76,0.05)}
+.import-drop p{font-size:.82rem;color:var(--white-dim);margin-top:6px}
+
+/* TABLE */
+.table-card{background:var(--navy-mid);border:1px solid rgba(201,168,76,0.12);border-radius:14px;overflow:hidden}
+.table-toolbar{padding:16px 20px;display:flex;gap:10px;align-items:center;border-bottom:1px solid rgba(201,168,76,0.08);flex-wrap:wrap}
+.table-search{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.15);border-radius:6px;padding:7px 12px;color:var(--white);font-size:.85rem;outline:none;min-width:150px}
+.table-search:focus{border-color:var(--gold)}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 14px;text-align:left;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid rgba(201,168,76,0.1);white-space:nowrap}
+td{padding:11px 14px;font-size:.84rem;color:var(--white-dim);border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(201,168,76,0.03)}
+.td-name{max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--white)}
+.td-price{color:var(--gold);white-space:nowrap}
+.td-actions{display:flex;gap:6px;white-space:nowrap}
+
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:8px;font-size:.88rem;z-index:9999;opacity:0;transition:all .3s;pointer-events:none}
+#toast.show{opacity:1}
+#toast.success{background:var(--green);color:#fff}
+#toast.error{background:var(--red);color:#fff}
+
+/* TABLE PAGINATION */
+.tbl-pagination{padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(201,168,76,0.08)}
+.tbl-page-btns{display:flex;gap:6px}
+.tbl-pg-btn{width:32px;height:32px;border-radius:6px;border:1px solid rgba(201,168,76,0.2);background:transparent;color:var(--white-dim);cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.tbl-pg-btn:hover,.tbl-pg-btn.active{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+.tbl-pg-btn.disabled{opacity:.3;pointer-events:none}
+.tbl-count{font-size:.78rem;color:var(--white-dim)}
+
+/* Scroll */
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--navy)}::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:3px}
+@media(max-width:768px){main{padding:16px}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:span 1}.stats{padding:16px 16px 0}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">🏛 BĐS Admin</div>
+    <div class="login-sub">Trang quản lý bất động sản</div>
+    <input class="login-input" id="pwInput" type="password" placeholder="Nhập mật khẩu..." onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Đăng nhập</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">🏛 BĐS Admin</div>
+    <div class="header-actions">
+      <a href="index.html" target="_blank" class="btn btn-outline">🌐 Xem trang web</a>
+      <button class="logout-btn" onclick="doLogout()">Đăng xuất</button>
+    </div>
+  </div>
+</header>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-card"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Tổng bất động sản</div></div>
+  <div class="stat-card"><div class="stat-val" id="statSale">0</div><div class="stat-label">Đang bán</div></div>
+  <div class="stat-card"><div class="stat-val" id="statRent">0</div><div class="stat-label">Cho thuê</div></div>
+  <div class="stat-card"><div class="stat-val" id="statTags">0</div><div class="stat-label">Chủ đề / Tags</div></div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <!-- LEFT: FORM + IMPORT -->
+  <div>
+    <!-- ADD/EDIT FORM -->
+    <div class="form-card">
+      <div class="section-title">✦ <span id="formTitle">Thêm bất động sản</span></div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Tên bất động sản *</label>
+          <input id="f_name" type="text" placeholder="VD: Căn hộ cao cấp Vinhomes Q7">
+        </div>
+        <div class="form-group">
+          <label>Giá</label>
+          <input id="f_price" type="text" placeholder="VD: 15 triệu/tháng">
+        </div>
+        <div class="form-group">
+          <label>Khu vực / Địa chỉ</label>
+          <input id="f_location" type="text" placeholder="VD: Quận 7, TP.HCM">
+        </div>
+        <div class="form-group">
+          <label>Diện tích</label>
+          <input id="f_area" type="text" placeholder="VD: 75m²">
+        </div>
+        <div class="form-group">
+          <label>Số phòng ngủ</label>
+          <input id="f_rooms" type="text" placeholder="VD: 2">
+        </div>
+        <div class="form-group">
+          <label>Badge nhãn (tuỳ chọn)</label>
+          <input id="f_badge" type="text" placeholder="VD: HOT, MỚI, BÁN GẤP">
+        </div>
+        <div class="form-group">
+          <label>Tags (phân cách bằng dấu phẩy)</label>
+          <input id="f_tags" type="text" placeholder="VD: Căn hộ, Cho thuê, Cao cấp">
+        </div>
+        <div class="form-group full">
+          <label>Mô tả</label>
+          <textarea id="f_desc" placeholder="Mô tả chi tiết về bất động sản..."></textarea>
+        </div>
+        <div class="form-group full">
+          <label>Hình ảnh (kéo thả hoặc click để chọn)</label>
+          <div class="drop-zone" id="dropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+            <input class="drop-input" type="file" id="imgInput" accept="image/*" multiple onchange="handleFileSelect(event)">
+            <div class="drop-zone-icon">🖼</div>
+            <p>Kéo thả ảnh vào đây hoặc <strong style="color:var(--gold)">click để chọn</strong></p>
+            <p style="font-size:.75rem;margin-top:4px;color:rgba(245,240,232,0.35)">JPG, PNG, WEBP – nhiều ảnh cùng lúc</p>
+          </div>
+          <div class="image-previews" id="imagePreviews"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
+        <button class="btn btn-gold" onclick="saveProperty()" id="saveBtn">💾 Lưu bất động sản</button>
+        <button class="btn btn-outline" onclick="resetForm()" id="cancelBtn" style="display:none">✕ Huỷ chỉnh sửa</button>
+      </div>
+    </div>
+
+    <!-- IMPORT JSON -->
+    <div class="form-card" style="margin-top:20px">
+      <div class="section-title">📥 Import hàng loạt <small>– Upload file JSON để thêm nhiều BĐS cùng lúc</small></div>
+      <div class="import-drop" id="importDrop" ondragover="handleImportDragOver(event)" ondragleave="handleImportDragLeave(event)" ondrop="handleImportDrop(event)" onclick="document.getElementById('jsonInput').click()">
+        <input type="file" id="jsonInput" accept=".json" style="display:none" onchange="handleJSONSelect(event)">
+        <div style="font-size:1.8rem">📄</div>
+        <p><strong style="color:var(--gold)">Kéo thả file JSON</strong> hoặc click để chọn</p>
+        <p>Format: mảng các objects [{name, price, location, area, rooms, desc, tags[], badge, images[]}]</p>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm" onclick="downloadTemplate()">📋 Tải template JSON mẫu</button>
+        <button class="btn btn-red btn-sm" onclick="clearAll()">🗑 Xoá tất cả dữ liệu</button>
+        <button class="btn btn-outline btn-sm" onclick="exportJSON()">📤 Xuất JSON hiện tại</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: TABLE -->
+  <div>
+    <div class="table-card">
+      <div style="padding:18px 20px 0">
+        <div class="section-title">📋 Danh sách <small id="tableCount"></small></div>
+      </div>
+      <div class="table-toolbar">
+        <input class="table-search" id="tableSearch" type="text" placeholder="🔍 Tìm kiếm..." oninput="renderTable()">
+        <button class="btn btn-outline btn-sm" onclick="renderTable()">🔄</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Tên</th>
+              <th>Giá</th>
+              <th>Khu vực</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div class="tbl-pagination">
+        <div class="tbl-count" id="tblCountLabel"></div>
+        <div class="tbl-page-btns" id="tblPagination"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────
+// ADMIN PASSWORD — ĐỔI TẠI ĐÂY
+// ─────────────────────────────
+const ADMIN_PASSWORD = 'admin123'; // ← Đổi mật khẩu của bạn ở đây
+
+let data = [];
+let editId = null;
+let currentImages = []; // base64
+let tblPage = 1;
+const TBL_PER_PAGE = 20;
+
+// ─── AUTH ───
+function doLogin() {
+  const pw = document.getElementById('pwInput').value;
+  if (pw === ADMIN_PASSWORD) {
+    document.getElementById('loginScreen').style.display = 'none';
+    sessionStorage.setItem('admin_auth', '1');
+    loadData(); renderStats(); renderTable();
+  } else {
+    document.getElementById('loginErr').textContent = '❌ Sai mật khẩu, thử lại!';
+    document.getElementById('pwInput').value = '';
+  }
+}
+function doLogout() {
+  sessionStorage.removeItem('admin_auth');
+  location.reload();
+}
+if (sessionStorage.getItem('admin_auth') === '1') {
+  document.getElementById('loginScreen').style.display = 'none';
+  loadData(); renderStats(); renderTable();
+}
+
+// ─── DATA ───
+function loadData() {
+  try { data = JSON.parse(localStorage.getItem('bds_properties') || '[]'); }
+  catch(e) { data = []; }
+}
+function saveData() {
+  localStorage.setItem('bds_properties', JSON.stringify(data));
+  renderStats(); renderTable();
+}
+
+// ─── STATS ───
+function renderStats() {
+  document.getElementById('statTotal').textContent = data.length;
+  document.getElementById('statSale').textContent = data.filter(p => (p.tags||[]).some(t => t.toLowerCase().includes('bán'))).length;
+  document.getElementById('statRent').textContent = data.filter(p => (p.tags||[]).some(t => t.toLowerCase().includes('thuê'))).length;
+  const tagSet = new Set(); data.forEach(p => (p.tags||[]).forEach(t => tagSet.add(t)));
+  document.getElementById('statTags').textContent = tagSet.size;
+}
+
+// ─── TABLE ───
+function getTableFiltered() {
+  const q = (document.getElementById('tableSearch')?.value||'').toLowerCase();
+  if (!q) return [...data];
+  return data.filter(p =>
+    (p.name||'').toLowerCase().includes(q) ||
+    (p.price||'').toLowerCase().includes(q) ||
+    (p.location||'').toLowerCase().includes(q)
+  );
+}
+function renderTable() {
+  const filtered = getTableFiltered();
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / TBL_PER_PAGE));
+  if (tblPage > totalPages) tblPage = totalPages;
+  const start = (tblPage-1)*TBL_PER_PAGE;
+  const items = filtered.slice(start, start+TBL_PER_PAGE);
+  document.getElementById('tblCountLabel').textContent = `${total} mục`;
+  document.getElementById('tableCount').textContent = `(${data.length} tổng)`;
+  const tbody = document.getElementById('tableBody');
+  if (!items.length) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--white-dim)">Chưa có bất động sản nào</td></tr>`;
+  } else {
+    tbody.innerHTML = items.map(p => `
+      <tr>
+        <td class="td-name" title="${p.name||''}">${p.name||'–'}</td>
+        <td class="td-price">${p.price||'–'}</td>
+        <td>${p.location||'–'}</td>
+        <td><div class="td-actions">
+          <button class="btn btn-outline btn-sm" onclick="editProperty('${p.id}')">✏️</button>
+          <button class="btn btn-red btn-sm" onclick="deleteProperty('${p.id}')">🗑</button>
+        </div></td>
+      </tr>`).join('');
+  }
+  // Pagination
+  const pag = document.getElementById('tblPagination');
+  let ph = `<button class="tbl-pg-btn${tblPage===1?' disabled':''}" onclick="tblGoPage(${tblPage-1})">‹</button>`;
+  for (let i=1;i<=totalPages;i++) ph += `<button class="tbl-pg-btn${i===tblPage?' active':''}" onclick="tblGoPage(${i})">${i}</button>`;
+  ph += `<button class="tbl-pg-btn${tblPage===totalPages?' disabled':''}" onclick="tblGoPage(${tblPage+1})">›</button>`;
+  pag.innerHTML = totalPages > 1 ? ph : '';
+}
+function tblGoPage(p) {
+  const max = Math.ceil(getTableFiltered().length / TBL_PER_PAGE);
+  if (p<1||p>max) return; tblPage=p; renderTable();
+}
+
+// ─── FORM ───
+function resetForm() {
+  editId = null; currentImages = [];
+  ['f_name','f_price','f_location','f_area','f_rooms','f_badge','f_tags','f_desc'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('imagePreviews').innerHTML = '';
+  document.getElementById('formTitle').textContent = 'Thêm bất động sản';
+  document.getElementById('saveBtn').textContent = '💾 Lưu bất động sản';
+  document.getElementById('cancelBtn').style.display = 'none';
+}
+function editProperty(id) {
+  const p = data.find(x => x.id===id);
+  if (!p) return;
+  editId = id;
+  document.getElementById('f_name').value = p.name||'';
+  document.getElementById('f_price').value = p.price||'';
+  document.getElementById('f_location').value = p.location||'';
+  document.getElementById('f_area').value = p.area||'';
+  document.getElementById('f_rooms').value = p.rooms||'';
+  document.getElementById('f_badge').value = p.badge||'';
+  document.getElementById('f_tags').value = (p.tags||[]).join(', ');
+  document.getElementById('f_desc').value = p.desc||'';
+  currentImages = [...(p.images||[])];
+  renderPreviews();
+  document.getElementById('formTitle').textContent = 'Chỉnh sửa bất động sản';
+  document.getElementById('saveBtn').textContent = '✅ Cập nhật';
+  document.getElementById('cancelBtn').style.display = 'inline-flex';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function saveProperty() {
+  const name = document.getElementById('f_name').value.trim();
+  if (!name) { showToast('Vui lòng nhập tên bất động sản!','error'); return; }
+  const p = {
+    id: editId || 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+    name,
+    price: document.getElementById('f_price').value.trim(),
+    location: document.getElementById('f_location').value.trim(),
+    area: document.getElementById('f_area').value.trim(),
+    rooms: document.getElementById('f_rooms').value.trim(),
+    badge: document.getElementById('f_badge').value.trim(),
+    tags: document.getElementById('f_tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    desc: document.getElementById('f_desc').value.trim(),
+    images: [...currentImages],
+    createdAt: editId ? (data.find(x=>x.id===editId)?.createdAt||Date.now()) : Date.now()
+  };
+  if (editId) {
+    const idx = data.findIndex(x=>x.id===editId);
+    if (idx>-1) data[idx]=p;
+  } else {
+    data.unshift(p);
+  }
+  saveData();
+  resetForm();
+  showToast(editId ? 'Đã cập nhật!' : 'Đã thêm bất động sản!', 'success');
+}
+function deleteProperty(id) {
+  if (!confirm('Xoá bất động sản này?')) return;
+  data = data.filter(x => x.id !== id);
+  saveData();
+  showToast('Đã xoá!','success');
+}
+
+// ─── IMAGE HANDLING ───
+function handleDragOver(e) { e.preventDefault(); document.getElementById('dropZone').classList.add('drag-over'); }
+function handleDragLeave(e) { document.getElementById('dropZone').classList.remove('drag-over'); }
+function handleDrop(e) {
+  e.preventDefault(); document.getElementById('dropZone').classList.remove('drag-over');
+  processImageFiles(e.dataTransfer.files);
+}
+function handleFileSelect(e) { processImageFiles(e.target.files); }
+function processImageFiles(files) {
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      currentImages.push(ev.target.result);
+      renderPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function renderPreviews() {
+  const wrap = document.getElementById('imagePreviews');
+  wrap.innerHTML = currentImages.map((src,i) => `
+    <div class="img-preview">
+      <img src="${src}" alt="">
+      <button class="del-img" onclick="removeImg(${i})">✕</button>
+    </div>`).join('');
+}
+function removeImg(idx) {
+  currentImages.splice(idx,1); renderPreviews();
+}
+
+// ─── IMPORT JSON ───
+function handleImportDragOver(e) { e.preventDefault(); document.getElementById('importDrop').classList.add('drag-over'); }
+function handleImportDragLeave(e) { document.getElementById('importDrop').classList.remove('drag-over'); }
+function handleImportDrop(e) {
+  e.preventDefault(); document.getElementById('importDrop').classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) processJSONFile(f);
+}
+function handleJSONSelect(e) {
+  if (e.target.files[0]) processJSONFile(e.target.files[0]);
+}
+function processJSONFile(file) {
+  if (!file.name.endsWith('.json')) { showToast('Vui lòng chọn file .json','error'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      let arr = JSON.parse(ev.target.result);
+      if (!Array.isArray(arr)) arr = [arr];
+      const added = arr.map(p => ({
+        id: 'p_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+        name: p.name||'',
+        price: p.price||'',
+        location: p.location||'',
+        area: p.area||'',
+        rooms: p.rooms||'',
+        badge: p.badge||'',
+        tags: Array.isArray(p.tags)?p.tags:[],
+        desc: p.desc||'',
+        images: Array.isArray(p.images)?p.images:[],
+        createdAt: Date.now()
+      }));
+      data = [...added, ...data];
+      saveData();
+      showToast(`✅ Đã import ${added.length} bất động sản!`, 'success');
+    } catch(e) { showToast('❌ File JSON không hợp lệ!', 'error'); }
+  };
+  reader.readAsText(file);
+}
+
+// ─── TEMPLATE + EXPORT ───
+function downloadTemplate() {
+  const template = [
+    {name:"Tên bất động sản 1",price:"10 triệu/tháng",location:"Quận 1, TP.HCM",area:"60m²",rooms:"2",badge:"HOT",tags:["Căn hộ","Cho thuê"],desc:"Mô tả chi tiết...",images:[]},
+    {name:"Tên bất động sản 2",price:"2.5 tỷ",location:"Bình Dương",area:"200m²",rooms:"3",badge:"MỚI",tags:["Nhà phố","Bán"],desc:"Mô tả chi tiết...",images:[]}
+  ];
+  const blob = new Blob([JSON.stringify(template,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'template_bds.json'; a.click();
+}
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'bds_export_'+Date.now()+'.json'; a.click();
+}
+function clearAll() {
+  if (!confirm('⚠️ Xoá TOÀN BỘ dữ liệu? Không thể khôi phục!')) return;
+  data = []; saveData(); showToast('Đã xoá tất cả!','success');
+}
+
+// ─── TOAST ───
+function showToast(msg, type='success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = `show ${type}`;
+  setTimeout(()=>{ el.className=''; },3000);
+}
+</script>
+</body>
+</html>
